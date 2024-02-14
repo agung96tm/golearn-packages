@@ -1,0 +1,33 @@
+{{define "title"}}Create Article{{end}}
+
+{{define "main"}}
+    <h2>Create Article</h2>
+
+    <form action='/articles' method='POST'>
+        <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+
+        <div>
+            <div>
+                <label for="title">Title:</label>
+            </div>
+            <input type='text' name='title' value='{{.Form.Title}}'>
+            {{if .Form.ErrFields.Title}}
+                <div class='error'>{{index .Form.ErrFields.Title 0}}</div>
+            {{end}}
+        </div>
+
+        <div>
+            <div>
+                <label for="body">Body:</label>
+            </div>
+            <textarea name='body' value='{{.Form.Body}}'></textarea>
+            {{if .Form.ErrFields.Body}}
+                <div class='error'>{{index .Form.ErrFields.Body 0}}</div>
+            {{end}}
+        </div>
+
+        <div>
+            <input type='submit' value='Submit'>
+        </div>
+    </form>
+{{end}}
