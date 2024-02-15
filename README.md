@@ -1,14 +1,16 @@
-Golearn Packages
+Golearn Packages [Validator]
 ====================================
-Learn any packages to support web development.
+Example Integrated [Validator](https://github.com/go-playground/validator) packages for Web and API.
 
+### How to Run
+```shell
+# run as api or web
+make runapi
+make runweb
 
-### List of Learns
-
-| Learns    | Topics                                                               |
-|-----------|----------------------------------------------------------------------|
-| Validator | [here](https://github.com/agung96tm/golearn-packages/tree/validator) |
-
+# more information
+make help
+```
 
 ### Contributors
 Agung Yuliyanto: [LinkedIn](https://www.linkedin.com/in/agung96tm/) | [Github](https://github.com/agung96tm)
