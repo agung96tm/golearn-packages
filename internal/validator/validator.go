@@ -42,6 +42,19 @@ func NewValidator() (*Validator, error) {
 	}, nil
 }
 
-func (v *Validator) Form(form any) {
-
+type ErrValidator struct {
+	ErrFields map[string][]string
 }
+
+func (e ErrValidator) Error() string {
+	var res []string
+	for key, _ := range e.ErrFields {
+		res = append(res, key)
+	}
+	return strings.Join(res, "")
+}
+
+//func (e *ErrValidator) Is(err error) bool {
+//	_, ok := err.(*ErrValidator)
+//	return ok
+//}
