@@ -22,7 +22,7 @@ func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// do something to save "req"
+	/* SAVE ARTICLES */
 	models.ArticleData = append(models.ArticleData, models.Article{
 		Title: req.Title,
 		Body:  req.Body,

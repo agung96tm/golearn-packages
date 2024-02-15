@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/agung96tm/golearn-packages/internal/form"
+	"github.com/agung96tm/golearn-packages/internal/models"
 	"net/http"
 )
 
@@ -38,6 +39,10 @@ func (app *application) ArticleCreatePost(w http.ResponseWriter, r *http.Request
 	}
 
 	/* SAVE ARTICLES */
+	models.ArticleData = append(models.ArticleData, models.Article{
+		Title: articleForm.Title,
+		Body:  articleForm.Body,
+	})
 
 	app.sessionManager.Put(r.Context(), "flash", "Article Success Created!")
 	app.redirect(w, r, "/articles")
