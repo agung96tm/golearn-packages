@@ -1,4 +1,4 @@
-Golearn Packages
+Golearn Packages [Nullable]
 ====================================
 Learn any packages to support web development.
 
@@ -8,13 +8,6 @@ Learn any packages to support web development.
 make runapi  # api application
 make runweb  # web application
 ```
-
-### List of Learns
-
-| Learns                       | Topics                                                               |
-|------------------------------|----------------------------------------------------------------------|
-| Validator                    | [here](https://github.com/agung96tm/golearn-packages/tree/validator) |
-| Handle Nullable Request Data | [here](https://github.com/agung96tm/golearn-packages/tree/validator) |
 
 
 ### Contributors
