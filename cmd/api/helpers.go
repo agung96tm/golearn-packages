@@ -6,10 +6,21 @@ import (
 	"fmt"
 	appValidator "github.com/agung96tm/golearn-packages/internal/validator"
 	"github.com/go-playground/validator/v10"
+	"github.com/julienschmidt/httprouter"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 )
+
+func (app application) readIDParam(r *http.Request) (uint, error) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
+	if err != nil || id < 1 {
+		return 0, errors.New("invalid id parameter")
+	}
+	return uint(id), nil
+}
 
 func (app application) readJSON(w http.ResponseWriter, r *http.Request, dest any) error {
 	maxBytes := 1_048_576
@@ -98,7 +109,11 @@ func (app application) validateJSON(dest any) error {
 	return nil
 }
 
-func (app application) errorResponse(w http.ResponseWriter, status int, message interface{}) {
+func (app application) errorResponse(w http.ResponseWriter, status int, message any) {
+	if err, ok := message.(error); ok {
+		message = err.Error()
+	}
+
 	env := struct {
 		Message any `json:"message"`
 	}{Message: message}
@@ -124,4 +139,8 @@ func (app application) badRequestResponse(w http.ResponseWriter, err error) {
 	}
 
 	app.errorResponse(w, http.StatusBadRequest, err.Error())
+}
+
+func (app application) notFoundResponse(w http.ResponseWriter, message any) {
+	app.errorResponse(w, http.StatusNotFound, message)
 }
