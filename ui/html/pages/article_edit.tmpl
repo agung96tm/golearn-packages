@@ -1,10 +1,14 @@
-{{define "title"}}Create Article{{end}}
+{{define "title"}}Update Article{{end}}
 
 {{define "main"}}
-    <h2>Create Article</h2>
+    <h2>Update Article</h2>
 
-    <form action='/articles/create' method='POST'>
+    <form action='/articles/edit/{{.Article.ID}}' method='POST'>
         <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+
+        {{range .Form.ErrNonFields}}
+            <div class='error'>{{.}}</div>
+        {{end}}
 
         <div>
             <div>

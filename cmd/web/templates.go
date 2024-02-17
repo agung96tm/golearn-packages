@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/agung96tm/golearn-packages/internal/models"
 	"github.com/agung96tm/golearn-packages/ui"
 	"html/template"
 	"io/fs"
@@ -12,6 +13,9 @@ type templateData struct {
 	Form        any
 	Flash       string
 	CSRFToken   string
+
+	Article  *models.Article
+	Articles []models.Article
 }
 
 var functions = template.FuncMap{}

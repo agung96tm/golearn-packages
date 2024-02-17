@@ -7,9 +7,11 @@ import (
 	appForm "github.com/agung96tm/golearn-packages/internal/form"
 	"github.com/go-playground/form/v4"
 	"github.com/go-playground/validator/v10"
+	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/nosurf"
 	"net/http"
 	"runtime/debug"
+	"strconv"
 	"time"
 )
 
@@ -56,6 +58,15 @@ func (app *application) PostForm(r *http.Request, dst appForm.IForm) error {
 	return nil
 }
 
+func (app *application) readIDParam(r *http.Request) (uint, error) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
+	if err != nil || id < 1 {
+		return 0, errors.New("invalid id parameter")
+	}
+	return uint(id), nil
+}
+
 func (app *application) render(w http.ResponseWriter, status int, page string, data *templateData) {
 	ts, ok := app.templateCache[page]
 	if !ok {
@@ -73,6 +84,11 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 
 	w.WriteHeader(status)
 	buf.WriteTo(w)
+}
+
+func (app *application) notFound(w http.ResponseWriter, r *http.Request, url string) {
+	app.sessionManager.Put(r.Context(), "flash", "data not found!")
+	app.redirect(w, r, url)
 }
 
 func (app *application) redirect(w http.ResponseWriter, r *http.Request, url string) {

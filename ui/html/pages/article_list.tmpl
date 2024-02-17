@@ -1,0 +1,28 @@
+{{define "title"}}Articles{{end}}
+
+{{define "main"}}
+    <h2>Articles</h2>
+
+    <div>
+        <a href='/articles/create'>Create Article</a>
+    </div>
+
+    {{if .Articles}}
+    <table>
+        <tr>
+            <td>Title</td>
+            <td>Action</td>
+        </tr>
+        {{range .Articles}}
+        <tr>
+            <td>{{.Title}}</td>
+            <td>
+                <a href='/articles/edit/{{.ID}}'>Edit</a>
+            </td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>No data.</p>
+    {{end}}
+{{end}}
