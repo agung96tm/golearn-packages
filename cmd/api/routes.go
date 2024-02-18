@@ -12,6 +12,7 @@ func (app application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/articles/:id", app.articleDetail)
 	router.HandlerFunc(http.MethodPost, "/articles", app.articleCreate)
 	router.HandlerFunc(http.MethodPatch, "/articles/:id", app.articleUpdate)
+	router.HandlerFunc(http.MethodDelete, "/articles/:id", app.articleDelete)
 
 	return router
 }
