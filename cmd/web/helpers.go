@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	appForm "github.com/agung96tm/golearn-packages/internal/form"
 	"github.com/go-playground/form/v4"
-	"github.com/go-playground/validator/v10"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/nosurf"
 	"net/http"
@@ -23,7 +21,7 @@ func (app *application) newTemplateData(r *http.Request) *templateData {
 	}
 }
 
-func (app *application) PostForm(r *http.Request, dst appForm.IForm) error {
+func (app *application) PostForm(r *http.Request, dst any) error {
 	err := r.ParseForm()
 	if err != nil {
 		return err
@@ -36,23 +34,6 @@ func (app *application) PostForm(r *http.Request, dst appForm.IForm) error {
 			panic(err)
 		}
 		return err
-	}
-
-	err = app.validator.Validate.Struct(dst)
-	if err != nil {
-		var errFields = make(map[string][]string)
-
-		var errs validator.ValidationErrors
-		errors.As(err, &errs)
-		for _, e := range errs {
-			key := e.Field()
-			if _, exists := errFields[key]; !exists {
-				errFields[key] = make([]string, 0)
-			}
-			errFields[key] = append(errFields[key], e.Translate(app.validator.Trans))
-		}
-
-		dst.SetErrFields(errFields)
 	}
 
 	return nil

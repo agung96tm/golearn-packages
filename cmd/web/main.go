@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/agung96tm/golearn-packages/internal/validator"
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
 	"html/template"
@@ -17,7 +16,6 @@ type application struct {
 	templateCache  map[string]*template.Template
 	debug          bool
 	formDecoder    *form.Decoder
-	validator      *validator.Validator
 	sessionManager *scs.SessionManager
 }
 
@@ -31,12 +29,6 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
-	// validator
-	v, err := validator.NewValidator()
-	if err != nil {
-		errorLog.Fatal(err)
-	}
-
 	// sessions
 	sessionManager := scs.New()
 	sessionManager.Lifetime = 24 * time.Hour
@@ -46,7 +38,6 @@ func main() {
 		infoLog:        infoLog,
 		templateCache:  templateCache,
 		formDecoder:    form.NewDecoder(),
-		validator:      v,
 		sessionManager: sessionManager,
 	}
 

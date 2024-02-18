@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	appValidator "github.com/agung96tm/golearn-packages/internal/validator"
-	"github.com/go-playground/validator/v10"
 	"github.com/julienschmidt/httprouter"
 	"io"
 	"net/http"
@@ -64,11 +62,6 @@ func (app application) readJSON(w http.ResponseWriter, r *http.Request, dest any
 		return errors.New("body must only contain a single JSON Value")
 	}
 
-	err = app.validateJSON(dest)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -86,25 +79,6 @@ func (app application) writeJSON(w http.ResponseWriter, status int, data any, he
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	w.Write(js)
-
-	return nil
-}
-
-func (app application) validateJSON(dest any) error {
-	err := app.validator.Validate.Struct(dest)
-	if err != nil {
-		if errs := err.(validator.ValidationErrors); err != nil {
-			var errFields = make(map[string][]string)
-			for _, e := range errs {
-				key := e.Field()
-				if _, exists := errFields[key]; !exists {
-					errFields[key] = make([]string, 0)
-				}
-				errFields[key] = append(errFields[key], e.Translate(app.validator.Trans))
-			}
-			return &appValidator.ErrValidator{ErrFields: errFields}
-		}
-	}
 
 	return nil
 }
@@ -132,13 +106,7 @@ func (app application) serverErrorResponse(w http.ResponseWriter, err error) {
 }
 
 func (app application) badRequestResponse(w http.ResponseWriter, err error) {
-	var errs *appValidator.ErrValidator
-	if errors.As(err, &errs) {
-		app.writeJSON(w, http.StatusBadRequest, errs.ErrFields, nil)
-		return
-	}
-
-	app.errorResponse(w, http.StatusBadRequest, err.Error())
+	app.errorResponse(w, http.StatusBadRequest, err)
 }
 
 func (app application) notFoundResponse(w http.ResponseWriter, message any) {

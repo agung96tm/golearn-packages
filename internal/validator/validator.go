@@ -1,60 +1,26 @@
 package validator
 
-import (
-	"github.com/go-playground/locales/en"
-	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator/v10"
-	enTranslator "github.com/go-playground/validator/v10/translations/en"
-	"reflect"
-	"strings"
-)
-
 type Validator struct {
-	Validate *validator.Validate
-	Trans    ut.Translator
+	ErrNonFields []string            `json:"err_non_fields"`
+	ErrFields    map[string][]string `json:"err_fields"`
 }
 
-func NewValidator() (*Validator, error) {
-	validate := validator.New()
-	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		nameTag := fld.Tag.Get("json")
-		if nameTag != "" {
-			name := strings.SplitN(nameTag, ",", 2)[0]
-			if name == "-" {
-				return ""
-			}
-			return name
-		}
-		return fld.Name
-	})
+func (v *Validator) IsValid() bool {
+	return len(v.ErrNonFields) == 0 && len(v.ErrFields) == 0
+}
 
-	newEn := en.New()
-	uni := ut.New(newEn, newEn)
-	trans, _ := uni.GetTranslator("en")
-	err := enTranslator.RegisterDefaultTranslations(validate, trans)
-	if err != nil {
-		return nil, err
+func (v *Validator) SetErrField(key string, message string) {
+	if v.ErrFields == nil {
+		v.ErrFields = make(map[string][]string)
 	}
 
-	return &Validator{
-		Validate: validate,
-		Trans:    trans,
-	}, nil
-}
-
-type ErrValidator struct {
-	ErrFields map[string][]string
-}
-
-func (e ErrValidator) Error() string {
-	var res []string
-	for key, _ := range e.ErrFields {
-		res = append(res, key)
+	if _, exists := v.ErrFields[key]; !exists {
+		v.ErrFields[key] = make([]string, 0)
 	}
-	return strings.Join(res, "")
+
+	v.ErrFields[key] = append(v.ErrFields[key], message)
 }
 
-//func (e *ErrValidator) Is(err error) bool {
-//	_, ok := err.(*ErrValidator)
-//	return ok
-//}
+func (v *Validator) SetErrNonField(message string) {
+	v.ErrNonFields = append(v.ErrNonFields, message)
+}

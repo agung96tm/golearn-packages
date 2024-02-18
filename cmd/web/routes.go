@@ -14,7 +14,6 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/", app.Home)
 
 	router.HandlerFunc(http.MethodGet, "/articles", app.ArticleList)
-
 	router.HandlerFunc(http.MethodGet, "/articles/create", app.ArticleCreate)
 	router.HandlerFunc(http.MethodPost, "/articles/create", app.ArticleCreatePost)
 	router.HandlerFunc(http.MethodGet, "/articles/edit/:id", app.ArticleEdit)

@@ -1,32 +1,23 @@
 package main
 
 import (
-	"github.com/agung96tm/golearn-packages/internal/validator"
 	"log"
 	"net/http"
 	"os"
 )
 
 type application struct {
-	errorLog  *log.Logger
-	infoLog   *log.Logger
-	validator *validator.Validator
+	errorLog *log.Logger
+	infoLog  *log.Logger
 }
 
 func main() {
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
-	// validator
-	v, err := validator.NewValidator()
-	if err != nil {
-		errorLog.Fatal(err)
-	}
-
 	app := application{
-		errorLog:  errorLog,
-		infoLog:   infoLog,
-		validator: v,
+		errorLog: errorLog,
+		infoLog:  infoLog,
 	}
 
 	srv := http.Server{

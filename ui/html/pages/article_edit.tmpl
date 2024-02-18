@@ -14,7 +14,7 @@
             <div>
                 <label for="title">Title:</label>
             </div>
-            <input type='text' name='title' value='{{if .Form.Title}}{{.Form.Title}}{{end}}'>
+            <input type='text' name='title' value='{{.Form.Title}}'>
             {{if .Form.ErrFields.Title}}
                 <div class='error'>{{index .Form.ErrFields.Title 0}}</div>
             {{end}}
@@ -24,7 +24,7 @@
             <div>
                 <label for="body">Body:</label>
             </div>
-            <textarea name='body'>{{if .Form.Body}}{{.Form.Body}}{{end}}</textarea>
+            <textarea name='body'>{{.Form.Body}}</textarea>
             {{if .Form.ErrFields.Body}}
                 <div class='error'>{{index .Form.ErrFields.Body 0}}</div>
             {{end}}

@@ -1,10 +1,5 @@
 package form
 
-type IForm interface {
-	SetErrFields(map[string][]string)
-	IsValid() bool
-}
-
 type Form struct {
 	ErrFields    map[string][]string
 	ErrNonFields []string
