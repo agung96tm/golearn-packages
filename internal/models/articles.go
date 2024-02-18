@@ -15,6 +15,11 @@ type ArticleModel struct {
 	DB lib.Database
 }
 
+func (m ArticleModel) WithTrx(db *gorm.DB) ArticleModel {
+	m.DB.ORM = db
+	return m
+}
+
 func (m ArticleModel) Query() ([]*Article, error) {
 	articles := make([]*Article, 0)
 	err := m.DB.ORM.Model(&Article{}).Find(&articles).Error

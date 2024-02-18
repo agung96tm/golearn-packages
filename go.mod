@@ -7,6 +7,7 @@ require (
 	github.com/go-playground/form/v4 v4.2.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/justinas/nosurf v1.1.1
+	github.com/urfave/negroni v1.0.0
 	gorm.io/driver/sqlite v1.5.5
 	gorm.io/gorm v1.25.7
 )
