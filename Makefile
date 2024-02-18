@@ -7,7 +7,7 @@ runweb:
 ## runapi: run the web application
 .PHONY: runapi
 runapi:
-	go run ./cmd/api
+	go run ./cmd/api -db-dsn=${DB_DSN}
 
 
 ## buildweb: build the web application
@@ -24,6 +24,20 @@ buildapi:
 	@echo "Building api..."
 	go build -ldflags=${linker_flags} -o=./bin/web ./cmd/api
 	GOOS=linux GOARCH=amd64 go build -ldflags=${linker_flags} -o=./bin/linux_amd64/api ./cmd/api
+
+
+## makemigrations name=$1: create a new database migration
+.PHONY: makemigrations
+makemigrations:
+	@echo "Create migration files for ${name}"
+	migrate create -seq -ext=.sql -dir=./migrations ${name}
+
+
+## migrate: apply all up database migrations
+.PHONY: migrate
+migrate:
+	@echo "Running up migrations..."
+	migrate -path ./migrations -database ${DB_DSN} up
 
 
 ## help: print this help message

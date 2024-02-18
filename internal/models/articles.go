@@ -1,19 +1,58 @@
 package models
 
-var ArticleData = Articles{
-	{
-		ID:    1,
-		Title: "Example 1",
-		Body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum " +
-			"has been the industry's standard dummy text ever since the 1500s, when an unknown " +
-			"printer took a galley of type and scrambled it to make a type specimen book.",
-	},
-}
+import (
+	"github.com/agung96tm/golearn-packages/lib"
+	"gorm.io/gorm"
+)
 
 type Article struct {
-	ID    uint   `json:"id"`
-	Title string `json:"title"`
-	Body  string `json:"body"`
+	gorm.Model
+	Title string
+	Body  string
 }
 
-type Articles []*Article
+type ArticleModel struct {
+	DB lib.Database
+}
+
+func (m ArticleModel) Query() ([]*Article, error) {
+	articles := make([]*Article, 0)
+	err := m.DB.ORM.Model(&Article{}).Find(&articles).Error
+	if err != nil {
+		return nil, err
+	}
+	return articles, err
+}
+
+func (m ArticleModel) Get(id uint) (*Article, error) {
+	user := new(Article)
+	err := m.DB.ORM.Model(user).Where("id=?", id).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (m ArticleModel) Create(article *Article) error {
+	err := m.DB.ORM.Model(article).Create(&article).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m ArticleModel) Update(article *Article) error {
+	err := m.DB.ORM.Model(article).Updates(article).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m ArticleModel) Delete(article *Article) error {
+	err := m.DB.ORM.Model(article).Delete(article).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
