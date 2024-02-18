@@ -36,6 +36,12 @@ func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	/*
+		-- Example with DB Transaction --
+		trxHandle := r.Context().Value(constants.DBTransaction).(*gorm.DB)
+		resp, err := app.ArticleServiceCreate(trxHandle, req)
+	*/
+
 	resp, err := app.ArticleServiceCreate(req)
 	if err != nil {
 		app.badRequestResponse(w, err)

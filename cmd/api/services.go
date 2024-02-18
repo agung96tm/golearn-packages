@@ -40,6 +40,20 @@ func (app application) ArticleServiceGet(id uint) (*ArticleResponse, error) {
 	return resp, nil
 }
 
+/* ----------------------
+Example with DB Transaction:
+
+func (app application) ArticleServiceCreate(trxHandler *gorm.DB, req *ArticleCreateRequest) (*ArticleResponse, error) {
+	...
+
+	if err := app.models.Article.WithTrx(trxHandler).Create(&article); err != nil {
+		return nil, err
+	}
+
+	...
+}
+---------------------- */
+
 func (app application) ArticleServiceCreate(req *ArticleCreateRequest) (*ArticleResponse, error) {
 	var valid validator.Validator
 	req.Validate(&valid)
@@ -54,6 +68,7 @@ func (app application) ArticleServiceCreate(req *ArticleCreateRequest) (*Article
 		Title: req.Title,
 		Body:  req.Body,
 	}
+
 	if err := app.models.Article.Create(&article); err != nil {
 		return nil, err
 	}

@@ -14,5 +14,5 @@ func (app application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/articles/:id", app.articleUpdate)
 	router.HandlerFunc(http.MethodDelete, "/articles/:id", app.articleDelete)
 
-	return router
+	return app.coreMiddleware(router)
 }
