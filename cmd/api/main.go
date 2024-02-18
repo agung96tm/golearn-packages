@@ -12,7 +12,9 @@ import (
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
-	models   models.Models
+
+	db     *lib.Database
+	models models.Models
 }
 
 func main() {
@@ -33,6 +35,7 @@ func main() {
 	app := application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
+		db:       db,
 		models:   models.NewModels(*db),
 	}
 
