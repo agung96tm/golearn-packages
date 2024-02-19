@@ -37,6 +37,12 @@ func (app application) articleCreatePost(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	/*
+		-- Example with DB Transaction --
+		trxHandle := r.Context().Value(constants.DBTransaction).(*gorm.DB)
+		resp, err := app.articleServiceCreate(trxHandle, &articleForm)
+	*/
+
 	article, err := app.articleServiceCreate(&articleForm)
 	if err != nil {
 		switch {

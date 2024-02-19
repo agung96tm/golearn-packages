@@ -20,6 +20,20 @@ func (app application) articleServiceGet(id uint) (*models.Article, error) {
 	return article, nil
 }
 
+/* ----------------------
+Example with DB Transaction:
+
+func (app application) articleServiceCreate(trxHandler *gorm.DB, form *ArticleForm) (*models.Article, error) {
+	...
+
+	if err := app.models.Article.WithTrx(trxHandler).Create(&article); err != nil {
+		return nil, err
+	}
+
+	...
+}
+---------------------- */
+
 func (app application) articleServiceCreate(form *ArticleForm) (*models.Article, error) {
 	if err := form.Validate(); err != nil {
 		return nil, err
