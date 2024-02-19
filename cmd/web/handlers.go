@@ -8,12 +8,12 @@ import (
 	"net/http"
 )
 
-func (app *application) Home(w http.ResponseWriter, r *http.Request) {
+func (app application) home(w http.ResponseWriter, r *http.Request) {
 	app.redirect(w, r, "/articles")
 }
 
-func (app *application) ArticleList(w http.ResponseWriter, r *http.Request) {
-	articles, err := app.ArticleServiceGetAll()
+func (app application) articleList(w http.ResponseWriter, r *http.Request) {
+	articles, err := app.articleServiceGetAll()
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -23,21 +23,21 @@ func (app *application) ArticleList(w http.ResponseWriter, r *http.Request) {
 	app.render(w, http.StatusOK, "article_list.tmpl", data)
 }
 
-func (app *application) ArticleCreate(w http.ResponseWriter, r *http.Request) {
+func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	data.Form = ArticleForm{}
 
 	app.render(w, http.StatusOK, "article_create.tmpl", data)
 }
 
-func (app *application) ArticleCreatePost(w http.ResponseWriter, r *http.Request) {
+func (app application) articleCreatePost(w http.ResponseWriter, r *http.Request) {
 	articleForm := ArticleForm{}
 	if err := app.PostForm(r, &articleForm); err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
 	}
 
-	article, err := app.ArticleServiceCreate(&articleForm)
+	article, err := app.articleServiceCreate(&articleForm)
 	if err != nil {
 		switch {
 		case errors.Is(err, form.ErrForm):
@@ -59,9 +59,9 @@ func (app *application) ArticleCreatePost(w http.ResponseWriter, r *http.Request
 	app.redirect(w, r, "/articles")
 }
 
-func (app *application) ArticleEdit(w http.ResponseWriter, r *http.Request) {
+func (app application) articleEdit(w http.ResponseWriter, r *http.Request) {
 	id, _ := app.readIDParam(r)
-	article, err := app.ArticleServiceGet(id)
+	article, err := app.articleServiceGet(id)
 	if err != nil {
 		app.notFound(w, r, "/articles")
 		return
@@ -79,7 +79,7 @@ func (app *application) ArticleEdit(w http.ResponseWriter, r *http.Request) {
 	app.render(w, http.StatusOK, "article_edit.tmpl", data)
 }
 
-func (app *application) ArticleEditPost(w http.ResponseWriter, r *http.Request) {
+func (app application) articleEditPost(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 	if err != nil {
 		app.notFound(w, r, "/articles")
@@ -92,7 +92,7 @@ func (app *application) ArticleEditPost(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	article, err := app.ArticleServiceUpdate(id, &articleForm)
+	article, err := app.articleServiceUpdate(id, &articleForm)
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNotFound):
@@ -118,14 +118,14 @@ func (app *application) ArticleEditPost(w http.ResponseWriter, r *http.Request) 
 	app.redirect(w, r, "/articles")
 }
 
-func (app *application) ArticleDeletePost(w http.ResponseWriter, r *http.Request) {
+func (app application) articleDeletePost(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 	if err != nil {
 		app.notFound(w, r, "/articles")
 		return
 	}
 
-	err = app.ArticleServiceDelete(id)
+	err = app.articleServiceDelete(id)
 	if err != nil {
 		switch {
 		case errors.Is(err, models.ErrNotFound):

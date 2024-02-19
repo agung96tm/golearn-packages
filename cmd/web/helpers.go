@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func (app *application) newTemplateData(r *http.Request) *templateData {
+func (app application) newTemplateData(r *http.Request) *templateData {
 	return &templateData{
 		CSRFToken:   nosurf.Token(r),
 		Flash:       app.sessionManager.PopString(r.Context(), "flash"),
@@ -21,7 +21,7 @@ func (app *application) newTemplateData(r *http.Request) *templateData {
 	}
 }
 
-func (app *application) PostForm(r *http.Request, dst any) error {
+func (app application) PostForm(r *http.Request, dst any) error {
 	err := r.ParseForm()
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (app *application) PostForm(r *http.Request, dst any) error {
 	return nil
 }
 
-func (app *application) readIDParam(r *http.Request) (uint, error) {
+func (app application) readIDParam(r *http.Request) (uint, error) {
 	params := httprouter.ParamsFromContext(r.Context())
 	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
 	if err != nil || id < 1 {
@@ -48,7 +48,7 @@ func (app *application) readIDParam(r *http.Request) (uint, error) {
 	return uint(id), nil
 }
 
-func (app *application) render(w http.ResponseWriter, status int, page string, data *templateData) {
+func (app application) render(w http.ResponseWriter, status int, page string, data *templateData) {
 	ts, ok := app.templateCache[page]
 	if !ok {
 		err := fmt.Errorf("the template %s does not exist", page)
@@ -67,16 +67,16 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 	buf.WriteTo(w)
 }
 
-func (app *application) notFound(w http.ResponseWriter, r *http.Request, url string) {
+func (app application) notFound(w http.ResponseWriter, r *http.Request, url string) {
 	app.sessionManager.Put(r.Context(), "flash", "data not found!")
 	app.redirect(w, r, url)
 }
 
-func (app *application) redirect(w http.ResponseWriter, r *http.Request, url string) {
+func (app application) redirect(w http.ResponseWriter, r *http.Request, url string) {
 	http.Redirect(w, r, url, http.StatusSeeOther)
 }
 
-func (app *application) serverError(w http.ResponseWriter, err error) {
+func (app application) serverError(w http.ResponseWriter, err error) {
 	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
 	app.errorLog.Output(2, trace)
 
@@ -88,6 +88,6 @@ func (app *application) serverError(w http.ResponseWriter, err error) {
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-func (app *application) clientError(w http.ResponseWriter, status int) {
+func (app application) clientError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 }

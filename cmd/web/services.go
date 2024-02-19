@@ -4,7 +4,7 @@ import (
 	"github.com/agung96tm/golearn-packages/internal/models"
 )
 
-func (app *application) ArticleServiceGetAll() ([]*models.Article, error) {
+func (app application) articleServiceGetAll() ([]*models.Article, error) {
 	articles, err := app.models.Article.Query()
 	if err != nil {
 		return nil, err
@@ -12,7 +12,7 @@ func (app *application) ArticleServiceGetAll() ([]*models.Article, error) {
 	return articles, nil
 }
 
-func (app *application) ArticleServiceGet(id uint) (*models.Article, error) {
+func (app application) articleServiceGet(id uint) (*models.Article, error) {
 	article, err := app.models.Article.Get(id)
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func (app *application) ArticleServiceGet(id uint) (*models.Article, error) {
 	return article, nil
 }
 
-func (app *application) ArticleServiceCreate(form *ArticleForm) (*models.Article, error) {
+func (app application) articleServiceCreate(form *ArticleForm) (*models.Article, error) {
 	if err := form.Validate(); err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (app *application) ArticleServiceCreate(form *ArticleForm) (*models.Article
 	return &article, nil
 }
 
-func (app *application) ArticleServiceUpdate(id uint, form *ArticleEditForm) (*models.Article, error) {
+func (app application) articleServiceUpdate(id uint, form *ArticleEditForm) (*models.Article, error) {
 	article, err := app.models.Article.Get(id)
 	if err != nil {
 		return nil, models.ErrNotFound
@@ -56,7 +56,7 @@ func (app *application) ArticleServiceUpdate(id uint, form *ArticleEditForm) (*m
 	return article, nil
 }
 
-func (app *application) ArticleServiceDelete(id uint) error {
+func (app application) articleServiceDelete(id uint) error {
 	article, err := app.models.Article.Get(id)
 	if err != nil {
 		return models.ErrNotFound
