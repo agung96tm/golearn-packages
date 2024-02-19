@@ -8,29 +8,56 @@ import (
 type ArticleCreateRequest struct {
 	Title string `json:"title"`
 	Body  string `json:"body"`
+
+	validator.Validator `json:"-"`
 }
 
-func (a ArticleCreateRequest) Validate(v *validator.Validator) {
+func (a ArticleCreateRequest) Validate() error {
 	if a.Title == "" {
-		v.AddErrField("title", "the field is required")
+		a.AddErrField("title", "the field is required")
 	}
 	if a.Body == "" {
-		v.AddErrField("body", "the field is required")
+		a.AddErrField("body", "the field is required")
 	}
+
+	if !a.IsValid() {
+		return validator.ErrValidator{
+			Fields:    a.ErrFields,
+			NonFields: a.ErrNonFields,
+		}
+	}
+	return nil
 }
 
 type ArticleUpdateRequest struct {
 	Title string `json:"title"`
 	Body  string `json:"body"`
+
+	validator.Validator `json:"-"`
 }
 
-func (a ArticleUpdateRequest) Validate(v *validator.Validator, article *models.Article) {
+func (a ArticleUpdateRequest) Validate(article *models.Article) error {
+	//if a.Title == "" {
+	//	a.AddErrField("title", "the field is required")
+	//}
+	//if a.Body == "" {
+	//	a.AddErrField("body", "the field is required")
+	//}
+	if !a.IsValid() {
+		return validator.ErrValidator{
+			Fields:    a.ErrFields,
+			NonFields: a.ErrNonFields,
+		}
+	}
+
 	if a.Title != article.Title {
 		article.Title = a.Title
 	}
 	if a.Body != article.Body {
 		article.Body = a.Body
 	}
+
+	return nil
 }
 
 type ArticleResponse struct {

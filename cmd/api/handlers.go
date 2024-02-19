@@ -5,7 +5,7 @@ import (
 )
 
 func (app application) articleList(w http.ResponseWriter, r *http.Request) {
-	resp := app.ArticleServiceGetAll()
+	resp := app.articleServiceGetAll()
 
 	err := app.writeJSON(w, http.StatusOK, resp, nil)
 	if err != nil {
@@ -15,7 +15,7 @@ func (app application) articleList(w http.ResponseWriter, r *http.Request) {
 
 func (app application) articleDetail(w http.ResponseWriter, r *http.Request) {
 	id, _ := app.readIDParam(r)
-	resp, err := app.ArticleServiceGet(id)
+	resp, err := app.articleServiceGet(id)
 	if err != nil {
 		app.notFoundResponse(w, err)
 		return
@@ -39,10 +39,10 @@ func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
 	/*
 		-- Example with DB Transaction --
 		trxHandle := r.Context().Value(constants.DBTransaction).(*gorm.DB)
-		resp, err := app.ArticleServiceCreate(trxHandle, req)
+		resp, err := app.articleServiceCreate(trxHandle, req)
 	*/
 
-	resp, err := app.ArticleServiceCreate(req)
+	resp, err := app.articleServiceCreate(req)
 	if err != nil {
 		app.badRequestResponse(w, err)
 		return
@@ -67,7 +67,7 @@ func (app application) articleUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := app.ArticleServiceUpdate(id, &req)
+	resp, err := app.articleServiceUpdate(id, &req)
 	if err != nil {
 		app.badRequestResponse(w, err)
 		return
@@ -86,7 +86,7 @@ func (app application) articleDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.ArticleServiceDelete(id)
+	err = app.articleServiceDelete(id)
 	if err != nil {
 		app.badRequestResponse(w, err)
 		return

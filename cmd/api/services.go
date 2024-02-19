@@ -3,10 +3,9 @@ package main
 import (
 	"errors"
 	"github.com/agung96tm/golearn-packages/internal/models"
-	"github.com/agung96tm/golearn-packages/internal/validator"
 )
 
-func (app application) ArticleServiceGetAll() []*ArticleResponse {
+func (app application) articleServiceGetAll() []*ArticleResponse {
 	resp := make([]*ArticleResponse, 0)
 
 	articles, _ := app.models.Article.Query()
@@ -21,7 +20,7 @@ func (app application) ArticleServiceGetAll() []*ArticleResponse {
 	return resp
 }
 
-func (app application) ArticleServiceGet(id uint) (*ArticleResponse, error) {
+func (app application) articleServiceGet(id uint) (*ArticleResponse, error) {
 	if id <= 0 {
 		return nil, errors.New("article not found")
 	}
@@ -43,7 +42,7 @@ func (app application) ArticleServiceGet(id uint) (*ArticleResponse, error) {
 /* ----------------------
 Example with DB Transaction:
 
-func (app application) ArticleServiceCreate(trxHandler *gorm.DB, req *ArticleCreateRequest) (*ArticleResponse, error) {
+func (app application) articleServiceCreate(trxHandler *gorm.DB, req *ArticleCreateRequest) (*ArticleResponse, error) {
 	...
 
 	if err := app.models.Article.WithTrx(trxHandler).Create(&article); err != nil {
@@ -54,14 +53,9 @@ func (app application) ArticleServiceCreate(trxHandler *gorm.DB, req *ArticleCre
 }
 ---------------------- */
 
-func (app application) ArticleServiceCreate(req *ArticleCreateRequest) (*ArticleResponse, error) {
-	var valid validator.Validator
-	req.Validate(&valid)
-	if !valid.IsValid() {
-		return nil, validator.ErrValidator{
-			Fields:    valid.ErrFields,
-			NonFields: valid.ErrNonFields,
-		}
+func (app application) articleServiceCreate(req *ArticleCreateRequest) (*ArticleResponse, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
 	}
 
 	article := models.Article{
@@ -80,19 +74,14 @@ func (app application) ArticleServiceCreate(req *ArticleCreateRequest) (*Article
 	}, nil
 }
 
-func (app application) ArticleServiceUpdate(id uint, req *ArticleUpdateRequest) (*ArticleResponse, error) {
+func (app application) articleServiceUpdate(id uint, req *ArticleUpdateRequest) (*ArticleResponse, error) {
 	article, err := app.models.Article.Get(id)
 	if err != nil {
 		return nil, err
 	}
 
-	var valid validator.Validator
-	req.Validate(&valid, article)
-	if !valid.IsValid() {
-		return nil, validator.ErrValidator{
-			Fields:    valid.ErrFields,
-			NonFields: valid.ErrNonFields,
-		}
+	if err := req.Validate(article); err != nil {
+		return nil, err
 	}
 
 	err = app.models.Article.Update(article)
@@ -107,7 +96,7 @@ func (app application) ArticleServiceUpdate(id uint, req *ArticleUpdateRequest) 
 	}, nil
 }
 
-func (app application) ArticleServiceDelete(id uint) error {
+func (app application) articleServiceDelete(id uint) error {
 	article, err := app.models.Article.Get(id)
 	if err != nil {
 		return err
