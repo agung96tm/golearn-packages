@@ -1,8 +1,11 @@
 package models
 
 import (
+	"errors"
 	"github.com/agung96tm/golearn-packages/lib"
 )
+
+var ErrNotFound = errors.New("data not found")
 
 type Models struct {
 	Article ArticleModel

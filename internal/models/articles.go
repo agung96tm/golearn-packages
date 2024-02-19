@@ -39,7 +39,7 @@ func (m ArticleModel) Get(id uint) (*Article, error) {
 }
 
 func (m ArticleModel) Create(article *Article) error {
-	err := m.DB.ORM.Model(article).Create(&article).Error
+	err := m.DB.ORM.Model(article).Create(article).Error
 	if err != nil {
 		return err
 	}

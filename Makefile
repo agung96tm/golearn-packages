@@ -1,7 +1,7 @@
 ## runweb: run the web application
 .PHONY: runweb
 runweb:
-	go run ./cmd/web
+	go run ./cmd/web -db-dsn=${DB_DSN}
 
 
 ## runapi: run the web application

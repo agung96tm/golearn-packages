@@ -18,6 +18,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/articles/create", app.ArticleCreatePost)
 	router.HandlerFunc(http.MethodGet, "/articles/edit/:id", app.ArticleEdit)
 	router.HandlerFunc(http.MethodPost, "/articles/edit/:id", app.ArticleEditPost)
+	router.HandlerFunc(http.MethodPost, "/articles/delete/:id", app.ArticleDeletePost)
 
 	return app.sessionManager.LoadAndSave(app.noSurf(router))
 }
