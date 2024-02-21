@@ -1,17 +1,17 @@
 package main
 
 import (
+	"flag"
 	"log"
-	"net/http"
 	"os"
 )
 
-type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
-}
+var serveAs string
 
 func main() {
+	flag.StringVar(&serveAs, "serve", "app", "")
+	flag.Parse()
+
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
@@ -20,12 +20,10 @@ func main() {
 		infoLog:  infoLog,
 	}
 
-	srv := http.Server{
-		Addr:     ":8001",
-		ErrorLog: errorLog,
-		Handler:  app.routes(),
+	switch serveAs {
+	case "app":
+		errorLog.Fatal(app.serveApp())
+	default:
+		errorLog.Fatal(app.serveWorker())
 	}
-
-	infoLog.Printf("Starting Server on port :%d\n", 8001)
-	errorLog.Fatal(srv.ListenAndServe())
 }
