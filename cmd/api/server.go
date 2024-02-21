@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/agung96tm/golearn-packages/internal/queue"
 	"github.com/hibiken/asynq"
 	"log"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	queue    queue.Queue
 	runAs    string
 }
 
@@ -26,7 +28,12 @@ func (app application) serveApp() error {
 	}
 
 	app.infoLog.Printf("Starting Server on port :%d\n", 8001)
-	return srv.ListenAndServe()
+	err := srv.ListenAndServe()
+
+	if err != nil {
+		_ = app.queue.Close()
+	}
+	return err
 }
 
 func (app application) serveWorker() error {
@@ -43,4 +50,15 @@ func (app application) serveWorker() error {
 	)
 
 	return srv.Run(app.workers())
+}
+
+func (app application) serveScheduler() error {
+	scheduler := asynq.NewScheduler(
+		asynq.RedisClientOpt{Addr: ":6379"},
+		&asynq.SchedulerOpts{Location: time.Local},
+	)
+
+	app.scheduleRegister(scheduler)
+
+	return scheduler.Run()
 }
