@@ -19,5 +19,11 @@ func (app application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/articles/edit/:id", app.articleEdit)
 	router.HandlerFunc(http.MethodPost, "/articles/edit/:id", app.articleEditPost)
 
-	return app.sessionManager.LoadAndSave(app.noSurf(router))
+	return app.recoverPanic(
+		app.sessionManager.LoadAndSave(
+			app.noSurf(
+				app.secureHeaders(router),
+			),
+		),
+	)
 }

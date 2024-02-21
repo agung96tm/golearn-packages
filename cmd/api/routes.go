@@ -13,5 +13,5 @@ func (app application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/articles", app.articleCreate)
 	router.HandlerFunc(http.MethodPatch, "/articles/:id", app.articleUpdate)
 
-	return router
+	return app.recoverPanic(app.enableCORS(router))
 }
