@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -13,6 +14,11 @@ func (app application) articleDetail(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
+	err := app.runEmailDeliveryTask(uint(1))
+	if err != nil {
+		fmt.Println("error", err)
+	}
+
 	w.Write([]byte("create"))
 }
 
