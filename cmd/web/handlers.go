@@ -36,9 +36,12 @@ func (app application) articleEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	form := ArticleEditForm{}
+	form.BindModel(article)
+
 	data := app.newTemplateData(r)
 	data.Article = article
-	data.Form = ArticleEditForm{}
+	data.Form = form
 
 	app.render(w, http.StatusOK, "article_edit.tmpl", data)
 }
