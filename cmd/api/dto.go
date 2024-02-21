@@ -1,13 +1,17 @@
 package main
 
+import "github.com/agung96tm/golearn-packages/internal/validator"
+
 type ArticleCreateRequest struct {
-	Title string `json:"title"`
-	Body  string `json:"body"`
+	Title               string `json:"title"`
+	Body                string `json:"body"`
+	validator.Validator `json:"-"`
 }
 
 type ArticleUpdateRequest struct {
-	Title string `json:"title"`
-	Body  string `json:"body"`
+	Title               string `json:"title"`
+	Body                string `json:"body"`
+	validator.Validator `json:"-"`
 }
 
 type ArticleResponse struct {

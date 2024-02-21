@@ -5,11 +5,11 @@ import (
 	"github.com/agung96tm/golearn-packages/internal/models"
 )
 
-func (app *application) ArticleServiceGetAll() []*models.Article {
+func (app application) articleServiceGetAll() []*models.Article {
 	return models.ArticleData
 }
 
-func (app *application) ArticleServiceGet(id uint) (*models.Article, error) {
+func (app application) articleServiceGet(id uint) (*models.Article, error) {
 	var article *models.Article
 	for _, d := range models.ArticleData {
 		if d.ID == id {
@@ -22,10 +22,10 @@ func (app *application) ArticleServiceGet(id uint) (*models.Article, error) {
 	return article, nil
 }
 
-func (app *application) ArticleServiceCreate() {
+func (app application) articleServiceCreate() {
 	return
 }
 
-func (app *application) ArticleServiceUpdate() {
+func (app application) articleServiceUpdate() {
 	return
 }

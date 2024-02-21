@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/agung96tm/golearn-packages/internal/validator"
 	"github.com/julienschmidt/httprouter"
 	"io"
 	"net/http"
@@ -106,6 +107,13 @@ func (app application) serverErrorResponse(w http.ResponseWriter, err error) {
 }
 
 func (app application) badRequestResponse(w http.ResponseWriter, err error) {
+	if errValidator, ok := err.(validator.ErrValidator); ok {
+		err := app.writeJSON(w, http.StatusBadRequest, errValidator, nil)
+		if err != nil {
+			app.serverErrorResponse(w, err)
+		}
+		return
+	}
 	app.errorResponse(w, http.StatusBadRequest, err)
 }
 

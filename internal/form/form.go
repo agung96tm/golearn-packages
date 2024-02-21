@@ -1,5 +1,7 @@
 package form
 
+import "errors"
+
 type Form struct {
 	ErrFields    map[string][]string
 	ErrNonFields []string
@@ -25,3 +27,5 @@ func (f *Form) SetErrFields(fields map[string][]string) {
 func (f *Form) SetErrNonField(message string) {
 	f.ErrNonFields = append(f.ErrNonFields, message)
 }
+
+var ErrForm = errors.New("invalid form")

@@ -5,8 +5,8 @@ Learn any packages to support web development.
 
 ### How to run
 ```shell
-make runapi  # api application
-make runweb  # web application
+make runapi  # api application, localhost:8001
+make runweb  # web application, localhost:8000
 ```
 
 ### List of Learns

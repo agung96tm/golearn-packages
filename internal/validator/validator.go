@@ -1,5 +1,7 @@
 package validator
 
+import "fmt"
+
 type Validator struct {
 	ErrNonFields []string            `json:"err_non_fields"`
 	ErrFields    map[string][]string `json:"err_fields"`
@@ -23,4 +25,13 @@ func (v *Validator) SetErrField(key string, message string) {
 
 func (v *Validator) SetErrNonField(message string) {
 	v.ErrNonFields = append(v.ErrNonFields, message)
+}
+
+type ErrValidator struct {
+	Fields    map[string][]string `json:"fields"`
+	NonFields []string            `json:"non_fields"`
+}
+
+func (e ErrValidator) Error() string {
+	return fmt.Sprintf("%#v", e)
 }
