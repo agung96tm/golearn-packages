@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	appForm "github.com/agung96tm/golearn-packages/internal/form"
 	"github.com/go-playground/form/v4"
-	"github.com/go-playground/validator/v10"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/nosurf"
 	"net/http"
@@ -15,7 +13,7 @@ import (
 	"time"
 )
 
-func (app *application) newTemplateData(r *http.Request) *templateData {
+func (app application) newTemplateData(r *http.Request) *templateData {
 	return &templateData{
 		CSRFToken:   nosurf.Token(r),
 		Flash:       app.sessionManager.PopString(r.Context(), "flash"),
@@ -23,7 +21,7 @@ func (app *application) newTemplateData(r *http.Request) *templateData {
 	}
 }
 
-func (app *application) PostForm(r *http.Request, dst appForm.IForm) error {
+func (app application) PostForm(r *http.Request, dst any) error {
 	err := r.ParseForm()
 	if err != nil {
 		return err
@@ -38,27 +36,10 @@ func (app *application) PostForm(r *http.Request, dst appForm.IForm) error {
 		return err
 	}
 
-	err = app.validator.Validate.Struct(dst)
-	if err != nil {
-		var errFields = make(map[string][]string)
-
-		var errs validator.ValidationErrors
-		errors.As(err, &errs)
-		for _, e := range errs {
-			key := e.Field()
-			if _, exists := errFields[key]; !exists {
-				errFields[key] = make([]string, 0)
-			}
-			errFields[key] = append(errFields[key], e.Translate(app.validator.Trans))
-		}
-
-		dst.SetErrFields(errFields)
-	}
-
 	return nil
 }
 
-func (app *application) readIDParam(r *http.Request) (uint, error) {
+func (app application) readIDParam(r *http.Request) (uint, error) {
 	params := httprouter.ParamsFromContext(r.Context())
 	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
 	if err != nil || id < 1 {
@@ -67,7 +48,7 @@ func (app *application) readIDParam(r *http.Request) (uint, error) {
 	return uint(id), nil
 }
 
-func (app *application) render(w http.ResponseWriter, status int, page string, data *templateData) {
+func (app application) render(w http.ResponseWriter, status int, page string, data *templateData) {
 	ts, ok := app.templateCache[page]
 	if !ok {
 		err := fmt.Errorf("the template %s does not exist", page)
@@ -86,16 +67,16 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 	buf.WriteTo(w)
 }
 
-func (app *application) notFound(w http.ResponseWriter, r *http.Request, url string) {
+func (app application) notFound(w http.ResponseWriter, r *http.Request, url string) {
 	app.sessionManager.Put(r.Context(), "flash", "data not found!")
 	app.redirect(w, r, url)
 }
 
-func (app *application) redirect(w http.ResponseWriter, r *http.Request, url string) {
+func (app application) redirect(w http.ResponseWriter, r *http.Request, url string) {
 	http.Redirect(w, r, url, http.StatusSeeOther)
 }
 
-func (app *application) serverError(w http.ResponseWriter, err error) {
+func (app application) serverError(w http.ResponseWriter, err error) {
 	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
 	app.errorLog.Output(2, trace)
 

@@ -16,4 +16,4 @@ type Article struct {
 	Body  string `json:"body"`
 }
 
-type Articles []Article
+type Articles []*Article

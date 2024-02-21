@@ -15,7 +15,7 @@ type templateData struct {
 	CSRFToken   string
 
 	Article  *models.Article
-	Articles []models.Article
+	Articles []*models.Article
 }
 
 var functions = template.FuncMap{}

@@ -5,15 +5,15 @@ import (
 	"github.com/agung96tm/golearn-packages/internal/models"
 )
 
-func (app application) ArticleServiceGetAll() []models.Article {
+func (app application) articleServiceGetAll() []*models.Article {
 	return models.ArticleData
 }
 
-func (app application) ArticleServiceGet(id uint) (*models.Article, error) {
+func (app application) articleServiceGet(id uint) (*models.Article, error) {
 	var article *models.Article
 	for _, articleDb := range models.ArticleData {
 		if articleDb.ID == id {
-			article = &articleDb
+			article = articleDb
 		}
 	}
 	if article == nil {
@@ -22,20 +22,24 @@ func (app application) ArticleServiceGet(id uint) (*models.Article, error) {
 	return article, nil
 }
 
-func (app application) ArticleServiceCreate(data ArticleCreateRequest) (*ArticleResponse, error) {
+func (app application) articleServiceCreate(req *ArticleCreateRequest) (*ArticleResponse, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
 	var article models.Article
 	id := uint(len(models.ArticleData) + 1)
 
 	article.ID = id
-	if data.Title != nil {
-		article.Title = *data.Title
+	if req.Title != nil {
+		article.Title = *req.Title
 	}
-	if data.Body != nil {
-		article.Body = *data.Body
+	if req.Body != nil {
+		article.Body = *req.Body
 	}
 
 	// save to db
-	models.ArticleData = append(models.ArticleData, article)
+	models.ArticleData = append(models.ArticleData, &article)
 
 	return &ArticleResponse{
 		ID:    article.ID,
@@ -44,8 +48,12 @@ func (app application) ArticleServiceCreate(data ArticleCreateRequest) (*Article
 	}, nil
 }
 
-func (app application) ArticleServiceUpdate(id uint, data ArticleUpdateRequest) (*ArticleResponse, error) {
-	article, err := app.ArticleServiceGet(id)
+func (app application) articleServiceUpdate(id uint, data ArticleUpdateRequest) (*ArticleResponse, error) {
+	if id <= 0 {
+		return nil, models.ErrNotFound
+	}
+
+	article, err := app.articleServiceGet(id)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +68,7 @@ func (app application) ArticleServiceUpdate(id uint, data ArticleUpdateRequest) 
 	// update db
 	for i, articleDb := range models.ArticleData {
 		if articleDb.ID == id {
-			models.ArticleData[i] = *article
+			models.ArticleData[i] = article
 		}
 	}
 

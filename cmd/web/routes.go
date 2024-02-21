@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (app *application) routes() http.Handler {
+func (app application) routes() http.Handler {
 	router := httprouter.New()
 	fileServer := http.FileServer(http.FS(ui.Files))
 	router.Handler(http.MethodGet, "/static/*filepath", fileServer)

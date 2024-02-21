@@ -1,9 +1,8 @@
 package form
 
-type IForm interface {
-	SetErrFields(map[string][]string)
-	IsValid() bool
-}
+import (
+	"errors"
+)
 
 type Form struct {
 	ErrFields    map[string][]string
@@ -14,7 +13,7 @@ func (f *Form) IsValid() bool {
 	return len(f.ErrFields) == 0 && len(f.ErrNonFields) == 0
 }
 
-func (f *Form) SetErrField(key string, message string) {
+func (f *Form) AddErrField(key string, message string) {
 	if f.ErrFields == nil {
 		f.ErrFields = make(map[string][]string)
 	}
@@ -23,10 +22,8 @@ func (f *Form) SetErrField(key string, message string) {
 	}
 }
 
-func (f *Form) SetErrFields(fields map[string][]string) {
-	f.ErrFields = fields
-}
-
-func (f *Form) SetErrNonField(message string) {
+func (f *Form) AddErrNonField(message string) {
 	f.ErrNonFields = append(f.ErrNonFields, message)
 }
+
+var ErrForm = errors.New("invalid form")

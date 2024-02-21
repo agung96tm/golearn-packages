@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
+	"github.com/agung96tm/golearn-packages/internal/models"
 	"net/http"
 )
 
 func (app application) articleList(w http.ResponseWriter, r *http.Request) {
-	articles := app.ArticleServiceGetAll()
+	articles := app.articleServiceGetAll()
 
 	err := app.writeJSON(w, http.StatusOK, articles, nil)
 	if err != nil {
@@ -21,7 +23,7 @@ func (app application) articleDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	article, err := app.ArticleServiceGet(id)
+	article, err := app.articleServiceGet(id)
 	if err != nil {
 		app.notFoundResponse(w, err)
 		return
@@ -35,13 +37,12 @@ func (app application) articleDetail(w http.ResponseWriter, r *http.Request) {
 
 func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
 	var req ArticleCreateRequest
-	err := app.readJSON(w, r, &req)
-	if err != nil {
+	if err := app.readJSON(w, r, &req); err != nil {
 		app.badRequestResponse(w, err)
 		return
 	}
 
-	resp, err := app.ArticleServiceCreate(req)
+	resp, err := app.articleServiceCreate(&req)
 	if err != nil {
 		app.badRequestResponse(w, err)
 		return
@@ -54,22 +55,21 @@ func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app application) articleUpdate(w http.ResponseWriter, r *http.Request) {
-	id, err := app.readIDParam(r)
-	if err != nil {
-		app.notFoundResponse(w, r)
-		return
-	}
-
 	var req ArticleUpdateRequest
-	err = app.readJSON(w, r, &req)
-	if err != nil {
+	if err := app.readJSON(w, r, &req); err != nil {
 		app.badRequestResponse(w, err)
 		return
 	}
 
-	resp, err := app.ArticleServiceUpdate(id, req)
+	id, _ := app.readIDParam(r)
+	resp, err := app.articleServiceUpdate(id, req)
 	if err != nil {
-		app.badRequestResponse(w, err)
+		switch {
+		case errors.Is(err, models.ErrNotFound):
+			app.notFoundResponse(w, err)
+		default:
+			app.badRequestResponse(w, err)
+		}
 		return
 	}
 

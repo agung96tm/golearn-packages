@@ -6,9 +6,29 @@ import (
 )
 
 type ArticleForm struct {
-	Title     *string `form:"title" validate:"required,min=3"`
-	Body      *string `form:"body" validate:"required,min=10"`
+	Title     *string `form:"title"`
+	Body      *string `form:"body"`
 	form.Form `form:"-"`
+}
+
+func (f *ArticleForm) Validate(article *models.Article) error {
+	if f.Title == nil || *f.Title == "" {
+		f.AddErrField("Title", "The field is required")
+	} else {
+		article.Title = *f.Title
+	}
+
+	if f.Body == nil || *f.Body == "" {
+		f.AddErrField("Body", "The field is required")
+	} else {
+		article.Body = *f.Body
+	}
+
+	if !f.IsValid() {
+		return form.ErrForm
+	}
+
+	return nil
 }
 
 type ArticleEditForm struct {
@@ -17,9 +37,29 @@ type ArticleEditForm struct {
 	form.Form `form:"-"`
 }
 
-func ArticleEditBindWithModel(article *models.Article) *ArticleEditForm {
-	form := ArticleEditForm{}
-	form.Title = &article.Title
-	form.Body = &article.Body
-	return &form
+func (f *ArticleEditForm) Validate(article *models.Article) error {
+	if f.Title == nil || *f.Title == "" {
+		f.AddErrField("Title", "The field is required")
+	}
+	if f.Body == nil || *f.Body == "" {
+		f.AddErrField("Body", "The field is required")
+	}
+
+	if *f.Title != article.Title {
+		article.Title = *f.Title
+	}
+	if *f.Body != article.Body {
+		article.Body = *f.Body
+	}
+
+	if !f.IsValid() {
+		return form.ErrForm
+	}
+
+	return nil
+}
+
+func (f *ArticleEditForm) BindModel(article *models.Article) {
+	f.Title = &article.Title
+	f.Body = &article.Body
 }
