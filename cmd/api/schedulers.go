@@ -7,9 +7,11 @@ import (
 
 const Task1ScheduleTask = "task1"
 
-func (app application) scheduleRegister(scheduler *asynq.Scheduler) {
+// cron help: https://crontab.guru/#*_*_*_*_*
+
+func (app application) registerSchedulers(scheduler *asynq.Scheduler) {
 	if _, err := scheduler.Register(
-		"@every 30s",
+		"* * * * *", // minutes
 		asynq.NewTask(Task1ScheduleTask, nil),
 	); err != nil {
 		log.Fatal(err)

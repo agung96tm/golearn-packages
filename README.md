@@ -1,21 +1,34 @@
-Golearn Packages
+Golearn Packages [Queue]
 ====================================
 Learn any packages to support web development.
 
 
 ### How to run
+
 ```shell
-make runapi  # api application, localhost:8001
-make runweb  # web application, localhost:8000
+make dependencies
+make init
+
+# run api application, worker, and scheduler
+make runapi  
+make workerapi
+make schedulerapi
+
+# run web application, worker, and scheduler
+make runweb
+make workerweb
+make schedulerweb
 ```
 
-### List of Learns
+Track your task and scheduler:
+```shell
+asynq dash
+asynq stats
+asynq cron ls  # scheduler
+```
 
-| Learns            | Topics                                                               |
-|-------------------|----------------------------------------------------------------------|
-| Validator         | [here](https://github.com/agung96tm/golearn-packages/tree/validator) |
-| Nullable: Request | [here](https://github.com/agung96tm/golearn-packages/tree/nullable)  |
-| Database: Gorm    | [here](https://github.com/agung96tm/golearn-packages/tree/db-gorm)   |
+### Docs
+* asynq - docs: https://github.com/hibiken/asynq/wiki/Getting-Started
 
 ### Contributors
 Agung Yuliyanto: [LinkedIn](https://www.linkedin.com/in/agung96tm/) | [Github](https://github.com/agung96tm)

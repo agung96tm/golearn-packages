@@ -16,8 +16,6 @@ func (app application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/articles", app.articleList)
 	router.HandlerFunc(http.MethodGet, "/articles/create", app.articleCreate)
 	router.HandlerFunc(http.MethodPost, "/articles/create", app.articleCreatePost)
-	router.HandlerFunc(http.MethodGet, "/articles/edit/:id", app.articleEdit)
-	router.HandlerFunc(http.MethodPost, "/articles/edit/:id", app.articleEditPost)
 
 	return app.recoverPanic(
 		app.sessionManager.LoadAndSave(

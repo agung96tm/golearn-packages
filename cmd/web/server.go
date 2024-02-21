@@ -2,21 +2,28 @@ package main
 
 import (
 	"github.com/agung96tm/golearn-packages/internal/queue"
+	"github.com/alexedwards/scs/v2"
+	"github.com/go-playground/form/v4"
 	"github.com/hibiken/asynq"
+	"html/template"
 	"log"
 	"net/http"
 	"time"
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
-	queue    queue.Queue
+	errorLog       *log.Logger
+	infoLog        *log.Logger
+	templateCache  map[string]*template.Template
+	debug          bool
+	formDecoder    *form.Decoder
+	sessionManager *scs.SessionManager
+	queue          queue.Queue
 }
 
 func (app application) serveApp() error {
 	srv := &http.Server{
-		Addr: ":8001",
+		Addr: ":8000",
 
 		ErrorLog: app.errorLog,
 		Handler:  app.routes(),
@@ -26,7 +33,7 @@ func (app application) serveApp() error {
 		WriteTimeout: 30 * time.Second,
 	}
 
-	app.infoLog.Printf("Starting Server on port :%d\n", 8001)
+	app.infoLog.Printf("Starting Server on port :%d\n", 8000)
 	err := srv.ListenAndServe()
 
 	if err != nil {

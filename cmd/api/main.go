@@ -28,7 +28,7 @@ func main() {
 		errorLog.Fatal(app.serveApp())
 	case "worker":
 		errorLog.Fatal(app.serveWorker())
-	case "schedule":
+	case "scheduler":
 		errorLog.Fatal(app.serveScheduler())
 	}
 }

@@ -3,7 +3,9 @@ package queue
 import "github.com/hibiken/asynq"
 
 type Queue struct {
-	Client *asynq.Client
+	Client    *asynq.Client
+	Scheduler *asynq.Scheduler
+	Addr      string
 }
 
 func New(addr string) Queue {
@@ -11,6 +13,7 @@ func New(addr string) Queue {
 
 	return Queue{
 		Client: client,
+		Addr:   addr,
 	}
 }
 

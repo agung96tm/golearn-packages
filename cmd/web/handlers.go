@@ -1,6 +1,9 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+	"github.com/agung96tm/golearn-packages/internal/form"
 	"github.com/agung96tm/golearn-packages/internal/models"
 	"net/http"
 )
@@ -24,29 +27,24 @@ func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app application) articleCreatePost(w http.ResponseWriter, r *http.Request) {
-	app.sessionManager.Put(r.Context(), "flash", "Article Success Created!")
-	app.redirect(w, r, "/articles")
-}
+	var articleForm ArticleForm
+	if err := app.PostForm(r, &articleForm); err != nil {
+		app.clientError(w, http.StatusBadRequest)
+	}
 
-func (app application) articleEdit(w http.ResponseWriter, r *http.Request) {
-	id, _ := app.readIDParam(r)
-	article, err := app.articleServiceGet(id)
+	article, err := app.articleServiceCreate(&articleForm)
 	if err != nil {
-		app.notFound(w, r, "/articles")
+		switch {
+		case errors.Is(err, form.ErrForm):
+			data := app.newTemplateData(r)
+			data.Form = articleForm
+			app.render(w, http.StatusUnprocessableEntity, "article_create.tmpl", data)
+		default:
+			app.serverError(w, err)
+		}
 		return
 	}
 
-	form := ArticleEditForm{}
-	form.BindModel(article)
-
-	data := app.newTemplateData(r)
-	data.Article = article
-	data.Form = form
-
-	app.render(w, http.StatusOK, "article_edit.tmpl", data)
-}
-
-func (app application) articleEditPost(w http.ResponseWriter, r *http.Request) {
-	app.sessionManager.Put(r.Context(), "flash", "Article Success Updated!")
+	app.sessionManager.Put(r.Context(), "flash", fmt.Sprintf("Article `%s` Created!", article.Title))
 	app.redirect(w, r, "/articles")
 }

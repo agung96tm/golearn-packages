@@ -4,18 +4,21 @@ import (
 	"github.com/agung96tm/golearn-packages/internal/models"
 )
 
-func (app application) articleServiceGetAll() []*models.Article {
-	return models.ArticleData
-}
+func (app application) articleServiceCreate(req *ArticleCreateRequest) (*ArticleResponse, error) {
+	var article models.Article
+	if err := req.Validate(&article); err != nil {
+		return nil, err
+	}
 
-func (app application) articleServiceGet(id uint) (*models.Article, error) {
-	return nil, nil
-}
+	// save to db
+	models.ArticleData = append(models.ArticleData, &article)
 
-func (app application) articleServiceCreate(data ArticleCreateRequest) (*ArticleResponse, error) {
-	return nil, nil
-}
+	// task
+	app.runEmailArticleCreateTask(article.ID)
 
-func (app application) articleServiceUpdate(id uint, data ArticleUpdateRequest) (*ArticleResponse, error) {
-	return nil, nil
+	return &ArticleResponse{
+		ID:    article.ID,
+		Title: article.Title,
+		Body:  article.Body,
+	}, nil
 }

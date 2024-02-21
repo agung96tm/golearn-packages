@@ -12,20 +12,19 @@ type ArticleForm struct {
 }
 
 func (f *ArticleForm) Validate(article *models.Article) error {
-	return nil
-}
+	if f.Title == "" {
+		f.AddErrField("Title", "The field is required")
+	}
+	if f.Body == "" {
+		f.AddErrField("Body", "The field is required")
+	}
 
-type ArticleEditForm struct {
-	Title string `form:"title"`
-	Body  string `form:"body"`
-	form.Form
-}
+	article.ID = uint(len(models.ArticleData) + 1)
+	article.Title = f.Title
+	article.Body = f.Body
 
-func (f *ArticleEditForm) BindModel(article *models.Article) {
-	f.Title = article.Title
-	f.Body = article.Body
-}
-
-func (f *ArticleEditForm) Validate(article *models.Article) error {
+	if !f.IsValid() {
+		return form.ErrForm
+	}
 	return nil
 }

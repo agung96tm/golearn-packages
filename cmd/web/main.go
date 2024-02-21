@@ -1,25 +1,22 @@
 package main
 
 import (
+	"flag"
+	"github.com/agung96tm/golearn-packages/internal/queue"
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
-	"html/template"
 	"log"
-	"net/http"
 	"os"
 	"time"
 )
 
-type application struct {
-	errorLog       *log.Logger
-	infoLog        *log.Logger
-	templateCache  map[string]*template.Template
-	debug          bool
-	formDecoder    *form.Decoder
-	sessionManager *scs.SessionManager
-}
+var serveAs string
 
 func main() {
+	flag.StringVar(&serveAs, "serve", "app", "")
+	flag.Parse()
+
+	// log
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
@@ -39,14 +36,15 @@ func main() {
 		templateCache:  templateCache,
 		formDecoder:    form.NewDecoder(),
 		sessionManager: sessionManager,
+		queue:          queue.New("127.0.0.1:6379"),
 	}
 
-	srv := http.Server{
-		Addr:     ":8000",
-		ErrorLog: app.errorLog,
-		Handler:  app.routes(),
+	switch serveAs {
+	case "app":
+		errorLog.Fatal(app.serveApp())
+	case "worker":
+		errorLog.Fatal(app.serveWorker())
+	case "scheduler":
+		errorLog.Fatal(app.serveScheduler())
 	}
-
-	infoLog.Printf("Starting Server on port :%d\n", 8000)
-	errorLog.Fatal(srv.ListenAndServe())
 }
