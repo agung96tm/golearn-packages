@@ -28,8 +28,8 @@ func (v *Validator) AddErrNonField(message string) {
 }
 
 type ErrValidator struct {
-	Fields    map[string][]string `json:"fields"`
-	NonFields []string            `json:"non_fields"`
+	Fields    map[string][]string `json:"fields,omitempty"`
+	NonFields []string            `json:"non_fields,omitempty"`
 }
 
 func (e ErrValidator) Error() string {
