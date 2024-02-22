@@ -62,3 +62,9 @@ type ArticleResponse struct {
 	Title string `json:"title,omitempty"`
 	Body  string `json:"body,omitempty"`
 }
+
+type MediaResponse struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+	Path string `json:"path"`
+}

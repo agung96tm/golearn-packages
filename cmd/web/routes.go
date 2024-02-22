@@ -8,7 +8,9 @@ import (
 
 func (app application) routes() http.Handler {
 	router := httprouter.New()
+
 	fileServer := http.FileServer(http.FS(ui.Files))
+	router.Handler(http.MethodGet, "/media/*filepath", fileServer)
 	router.Handler(http.MethodGet, "/static/*filepath", fileServer)
 
 	router.HandlerFunc(http.MethodGet, "/", app.home)

@@ -22,6 +22,7 @@ type application struct {
 	sessionManager *scs.SessionManager
 	db             lib.Database
 	models         models.Model
+	storage        lib.Storage
 }
 
 var dbDSN string
@@ -50,6 +51,8 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	storage := lib.NewStorage()
+
 	app := &application{
 		errorLog:       errorLog,
 		infoLog:        infoLog,
@@ -57,7 +60,8 @@ func main() {
 		formDecoder:    form.NewDecoder(),
 		sessionManager: sessionManager,
 		db:             *db,
-		models:         models.New(db),
+		storage:        storage,
+		models:         models.New(db, &storage),
 	}
 
 	srv := http.Server{

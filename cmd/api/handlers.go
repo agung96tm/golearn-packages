@@ -99,3 +99,26 @@ func (app application) articleDelete(w http.ResponseWriter, r *http.Request) {
 		app.serverErrorResponse(w, err)
 	}
 }
+
+func (app application) articleUpload(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		app.notFoundResponse(w, "files size greater than 10mb")
+		return
+	}
+
+	fils, ok := r.MultipartForm.File["files"]
+	if !ok {
+		app.notFoundResponse(w, "No files can be selected")
+	}
+
+	resp, err := app.articleServiceUpload(fils)
+	if err != nil {
+		app.serverErrorResponse(w, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, resp, nil)
+	if err != nil {
+		app.serverErrorResponse(w, err)
+	}
+}

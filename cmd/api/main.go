@@ -14,6 +14,7 @@ type application struct {
 	infoLog  *log.Logger
 	db       lib.Database
 	models   models.Model
+	storage  lib.Storage
 }
 
 var dbDSN string
@@ -32,11 +33,15 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	// storage
+	storage := lib.NewStorage()
+
 	app := application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
 		db:       *db,
-		models:   models.New(db),
+		models:   models.New(db, &storage),
+		storage:  storage,
 	}
 
 	srv := http.Server{

@@ -1,6 +1,9 @@
 package main
 
-import "github.com/agung96tm/golearn-packages/internal/models"
+import (
+	"github.com/agung96tm/golearn-packages/internal/models"
+	"mime/multipart"
+)
 
 func (app application) articleServiceGetAll() ([]*ArticleResponse, error) {
 	articles, err := app.models.Article.GetAll()
@@ -77,4 +80,26 @@ func (app application) articleServiceDelete(id uint) error {
 		return err
 	}
 	return nil
+}
+
+func (app application) articleServiceUpload(fils []*multipart.FileHeader) ([]*MediaResponse, error) {
+	var medias []*models.Media
+	for i := range fils {
+		media, err := app.models.Media.Upload(fils[i])
+		if err != nil {
+			app.models.Media.DeleteAll(medias)
+			return nil, err
+		}
+		medias = append(medias, media)
+	}
+
+	var resp []*MediaResponse
+	for _, m := range medias {
+		resp = append(resp, &MediaResponse{
+			ID:   m.ID,
+			Name: m.Name,
+			Path: m.Path,
+		})
+	}
+	return resp, nil
 }

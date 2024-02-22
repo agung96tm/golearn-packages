@@ -14,9 +14,9 @@ type Model struct {
 	Article ArticleModel
 }
 
-func New(db *lib.Database) Model {
+func New(db *lib.Database, storage *lib.Storage) Model {
 	return Model{
-		Media:   MediaModel{DB: db},
+		Media:   MediaModel{DB: db, Storage: storage},
 		Article: ArticleModel{DB: db},
 	}
 }

@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS medias (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    path TEXT NOT NULL,
+    upload_as VARCHAR(255) NOT NULL
+);
