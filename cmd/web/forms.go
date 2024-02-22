@@ -12,6 +12,21 @@ type ArticleForm struct {
 }
 
 func (f *ArticleForm) Validate(article *models.Article) error {
+	if f.Title == "" {
+		f.AddErrField("Title", "The field is required")
+	} else {
+		article.Title = f.Title
+	}
+	if f.Body == "" {
+		f.AddErrField("Body", "The field is required")
+	} else {
+		article.Body = f.Body
+	}
+
+	if !f.IsValid() {
+		return form.ErrForm
+	}
+
 	return nil
 }
 
@@ -27,5 +42,16 @@ func (f *ArticleEditForm) BindModel(article *models.Article) {
 }
 
 func (f *ArticleEditForm) Validate(article *models.Article) error {
+	if !f.IsValid() {
+		return form.ErrForm
+	}
+
+	if f.Title != article.Title && f.Title != "" {
+		article.Title = f.Title
+	}
+	if f.Body != article.Body && f.Body != "" {
+		article.Body = f.Body
+	}
+
 	return nil
 }
