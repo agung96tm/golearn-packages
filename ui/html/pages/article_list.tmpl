@@ -17,7 +17,14 @@
         <tr>
             <td>{{.Title}}</td>
             <td>
-                <a href='/articles/edit/{{.ID}}'>Edit</a>
+                <a href='/articles/edit/{{.ID}}'>
+                    <button type="button">Edit</button>
+                </a>
+
+                <form action='/articles/delete/{{.ID}}' method='POST' style="display: inline;">
+                    <input type='hidden' name='csrf_token' value='{{$.CSRFToken}}'>
+                    <button type='submit'>Delete</button>
+                </form>
             </td>
         </tr>
         {{end}}

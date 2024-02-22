@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/agung96tm/golearn-packages/internal/models"
 	"net/http"
 )
 
@@ -11,8 +10,7 @@ func (app application) home(w http.ResponseWriter, r *http.Request) {
 
 func (app application) articleList(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
-	data.Articles = models.ArticleData
-
+	data.Articles = app.articleServiceGetAll()
 	app.render(w, http.StatusOK, "article_list.tmpl", data)
 }
 
@@ -48,5 +46,10 @@ func (app application) articleEdit(w http.ResponseWriter, r *http.Request) {
 
 func (app application) articleEditPost(w http.ResponseWriter, r *http.Request) {
 	app.sessionManager.Put(r.Context(), "flash", "Article Success Updated!")
+	app.redirect(w, r, "/articles")
+}
+
+func (app application) articleDeletePost(w http.ResponseWriter, r *http.Request) {
+	app.sessionManager.Put(r.Context(), "flash", "Article Success Deleted!")
 	app.redirect(w, r, "/articles")
 }

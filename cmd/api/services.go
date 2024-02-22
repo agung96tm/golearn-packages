@@ -19,3 +19,7 @@ func (app application) articleServiceCreate(data ArticleCreateRequest) (*Article
 func (app application) articleServiceUpdate(id uint, data ArticleUpdateRequest) (*ArticleResponse, error) {
 	return nil, nil
 }
+
+func (app application) articleServiceDelete(id uint) error {
+	return nil
+}

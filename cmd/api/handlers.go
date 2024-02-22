@@ -19,3 +19,7 @@ func (app application) articleCreate(w http.ResponseWriter, r *http.Request) {
 func (app application) articleUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("update"))
 }
+
+func (app application) articleDelete(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("update"))
+}

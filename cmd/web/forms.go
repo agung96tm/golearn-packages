@@ -12,6 +12,9 @@ type ArticleForm struct {
 }
 
 func (f *ArticleForm) Validate(article *models.Article) error {
+	if !f.IsValid() {
+		return form.ErrForm
+	}
 	return nil
 }
 
@@ -27,5 +30,8 @@ func (f *ArticleEditForm) BindModel(article *models.Article) {
 }
 
 func (f *ArticleEditForm) Validate(article *models.Article) error {
+	if !f.IsValid() {
+		return form.ErrForm
+	}
 	return nil
 }
