@@ -8,6 +8,7 @@ import (
 type ArticleCreateRequest struct {
 	Title               string `json:"title"`
 	Body                string `json:"body"`
+	Image               uint   `json:"image"`
 	validator.Validator `json:"-"`
 }
 
@@ -24,11 +25,14 @@ func (r *ArticleCreateRequest) Validate(article *models.Article) error {
 		article.Body = r.Body
 	}
 
+	if r.Image == 0 {
+		r.AddErrField("image", "The field is required")
+	} else {
+		article.ImageID = r.Image
+	}
+
 	if !r.IsValid() {
-		return validator.ErrValidator{
-			Fields:    r.ErrFields,
-			NonFields: r.ErrNonFields,
-		}
+		return r.GetAllErrors()
 	}
 	return nil
 }
@@ -58,9 +62,10 @@ func (r *ArticleUpdateRequest) Validate(article *models.Article) error {
 }
 
 type ArticleResponse struct {
-	ID    uint   `json:"id,omitempty"`
-	Title string `json:"title,omitempty"`
-	Body  string `json:"body,omitempty"`
+	ID    uint           `json:"id,omitempty"`
+	Title string         `json:"title,omitempty"`
+	Body  string         `json:"body,omitempty"`
+	Image *MediaResponse `json:"image,omitempty"`
 }
 
 type MediaResponse struct {

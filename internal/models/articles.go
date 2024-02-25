@@ -14,9 +14,14 @@ type ArticleModel struct {
 
 func (m ArticleModel) GetAll() (Articles, error) {
 	query := `
-		SELECT id, title, body
+		SELECT articles.id, 
+			   articles.title, 
+			   articles.body, 
+			   medias.id, 
+			   medias.name, 
+			   medias.path
 		FROM articles
-		ORDER BY id
+		LEFT JOIN medias ON articles.image_id = medias.id
 	`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -31,7 +36,14 @@ func (m ArticleModel) GetAll() (Articles, error) {
 	for rows.Next() {
 		var article Article
 
-		err := rows.Scan(&article.ID, &article.Title, &article.Body)
+		err := rows.Scan(
+			&article.ID,
+			&article.Title,
+			&article.Body,
+			&article.Image.ID,
+			&article.Image.Name,
+			&article.Image.Path,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -52,9 +64,15 @@ func (m ArticleModel) Get(id uint) (*Article, error) {
 	}
 
 	query := `
-		SELECT id, title, body
+		SELECT articles.id, 
+			   articles.title, 
+			   articles.body, 
+			   medias.id, 
+			   medias.name, 
+			   medias.path
 		FROM articles
-		WHERE id = $1
+		LEFT JOIN medias ON articles.image_id = medias.id
+		WHERE articles.id = $1
 	`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -65,6 +83,9 @@ func (m ArticleModel) Get(id uint) (*Article, error) {
 		&article.ID,
 		&article.Title,
 		&article.Body,
+		&article.Image.ID,
+		&article.Image.Name,
+		&article.Image.Path,
 	)
 	if err != nil {
 		switch {
@@ -80,15 +101,15 @@ func (m ArticleModel) Get(id uint) (*Article, error) {
 
 func (m ArticleModel) Create(article *Article) error {
 	query := `
-		INSERT INTO articles (title, body) 
-		VALUES ($1, $2)
+		INSERT INTO articles (title, body, image_id) 
+		VALUES ($1, $2, $3)
 		RETURNING id
 	`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{article.Title, article.Body}
+	args := []any{article.Title, article.Body, article.ImageID}
 
 	return m.DB.ORM.QueryRowContext(ctx, query, args...).Scan(
 		&article.ID,
@@ -146,10 +167,18 @@ func (m ArticleModel) Delete(id uint) error {
 	return nil
 }
 
+type MediaInArticle struct {
+	ID   sql.NullInt64
+	Name sql.NullString
+	Path sql.NullString
+}
+
 type Article struct {
-	ID    uint   `json:"id"`
-	Title string `json:"title"`
-	Body  string `json:"body"`
+	ID      uint           `json:"id"`
+	Title   string         `json:"title"`
+	Body    string         `json:"body"`
+	ImageID uint           `json:"image_id"`
+	Image   MediaInArticle `json:"image"`
 }
 
 type Articles []*Article

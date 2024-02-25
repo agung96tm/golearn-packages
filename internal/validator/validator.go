@@ -27,6 +27,13 @@ func (v *Validator) AddErrNonField(message string) {
 	v.ErrNonFields = append(v.ErrNonFields, message)
 }
 
+func (v *Validator) GetAllErrors() ErrValidator {
+	return ErrValidator{
+		Fields:    v.ErrFields,
+		NonFields: v.ErrNonFields,
+	}
+}
+
 type ErrValidator struct {
 	Fields    map[string][]string `json:"fields,omitempty"`
 	NonFields []string            `json:"non_fields,omitempty"`

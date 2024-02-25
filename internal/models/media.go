@@ -17,6 +17,30 @@ type MediaModel struct {
 	Storage *lib.Storage
 }
 
+func (m MediaModel) Get(id uint) (*Media, error) {
+	query := `SELECT id, name, path FROM medias where id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var media Media
+	err := m.DB.ORM.QueryRowContext(ctx, query, id).Scan(
+		&media.ID,
+		&media.Name,
+		&media.Path,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &media, nil
+}
+
 func (m MediaModel) Create(media *Media) error {
 	query := `
 		INSERT INTO medias (name, path, upload_as) 

@@ -102,7 +102,7 @@ func (app application) articleDelete(w http.ResponseWriter, r *http.Request) {
 
 func (app application) articleUpload(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		app.notFoundResponse(w, "files size greater than 10mb")
+		app.notFoundResponse(w, "No files can be selected")
 		return
 	}
 

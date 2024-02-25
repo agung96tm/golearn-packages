@@ -34,6 +34,12 @@ runapi:
 # MIGRATIONS
 # ==================================================================================== #
 
+## makemigrations name=$1: create a new database migration
+.PHONY: makemigrations
+makemigrations:
+	migrate create -seq -ext=.sql -dir=./migrations ${name}
+
+## migrate: apply all up database migrations
 .PHONY: migrate
 migrate:
 	migrate -path=./migrations -database="${DB_DSN}" up

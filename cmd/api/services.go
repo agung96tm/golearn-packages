@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"github.com/agung96tm/golearn-packages/internal/models"
 	"mime/multipart"
 )
@@ -13,10 +14,20 @@ func (app application) articleServiceGetAll() ([]*ArticleResponse, error) {
 
 	var resp []*ArticleResponse
 	for _, article := range articles {
+		var imageResp *MediaResponse
+		if article.Image.ID.Int64 != 0 {
+			imageResp = &MediaResponse{
+				ID:   uint(article.Image.ID.Int64),
+				Name: article.Image.Name.String,
+				Path: article.Image.Path.String,
+			}
+		}
+
 		resp = append(resp, &ArticleResponse{
 			ID:    article.ID,
 			Title: article.Title,
 			Body:  article.Body,
+			Image: imageResp,
 		})
 	}
 
@@ -29,17 +40,41 @@ func (app application) articleServiceGet(id uint) (*ArticleResponse, error) {
 		return nil, err
 	}
 
+	var imageResp *MediaResponse
+	if article.Image.ID.Int64 != 0 {
+		imageResp = &MediaResponse{
+			ID:   uint(article.Image.ID.Int64),
+			Name: article.Image.Name.String,
+			Path: article.Image.Path.String,
+		}
+	}
 	return &ArticleResponse{
 		ID:    article.ID,
 		Title: article.Title,
 		Body:  article.Body,
+		Image: imageResp,
 	}, nil
 }
 
 func (app application) articleServiceCreate(req *ArticleCreateRequest) (*ArticleResponse, error) {
 	var article models.Article
+	var media models.Media
+
 	if err := req.Validate(&article); err != nil {
 		return nil, err
+	}
+	if article.ImageID != 0 {
+		r, err := app.models.Media.Get(req.Image)
+		if err != nil {
+			switch {
+			case errors.Is(err, models.ErrNotFound):
+				req.AddErrField("image_id", "image not found")
+				return nil, req.GetAllErrors()
+			default:
+				return nil, err
+			}
+		}
+		media = *r
 	}
 
 	if err := app.models.Article.Create(&article); err != nil {
@@ -50,6 +85,11 @@ func (app application) articleServiceCreate(req *ArticleCreateRequest) (*Article
 		ID:    article.ID,
 		Title: article.Title,
 		Body:  article.Body,
+		Image: &MediaResponse{
+			ID:   media.ID,
+			Name: media.Name,
+			Path: media.Path,
+		},
 	}, nil
 }
 
